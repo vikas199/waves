@@ -22,12 +22,34 @@ app.use(cookieParser());
 
 //models
 const { User } = require('./models/user')
+const { Brand } = require('./models/brand')
 
 //Middlewares
 
 const { auth } = require('./middleware/auth')
 
+////=========================================
 
+//             BRANDS
+
+//===========================================
+
+app.post('/api/product/brand',auth,(req,res)=>{
+const brand = new Brand(req.body);
+brand.save((err,doc)=>{
+    if(err) return res.json({success:false,err});
+    res.status(200).json({
+        success: true,
+        brand:doc
+    })
+})
+})
+
+////=========================================
+
+//                USERS
+
+//===========================================
 app.get('/api/users/auth',auth,(req,res)=>{
     res.status(200).json({
         isAdmin: req.user.role === 0 ? false : true,
