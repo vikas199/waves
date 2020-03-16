@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { update } from '../../utils/Forms/FormActions';
+import { update, genereteData, isFormValid } from '../../utils/Forms/FormActions';
 import { connect } from 'react-redux';
 import FormField from '../../utils/Forms/FormField'
+import { loginUser } from '../../actions/user_actions';
+import { withRouter } from 'react-router-dom';
 
-export default class Login extends Component {
+ class Login extends Component {
   state = {
       formError: false,
       formSuccess: '',
@@ -24,7 +26,7 @@ export default class Login extends Component {
               touched: false,
               validationMessage: ''
           },
-          passoword:{
+          password:{
             element: 'input',
             value: '',
             config:{
@@ -34,7 +36,7 @@ export default class Login extends Component {
             },
             validation:{
                 required: true,
-                passowrd: true
+                password: true
             },
             valid: false,
             touched: false,
@@ -51,10 +53,21 @@ export default class Login extends Component {
     })
 }
 
-  submitForm = () => {
-
+  submitForm = (event) => {
+      event.preventDefault();
+      let dataToSubmit = genereteData(this.state.formdata,'login')
+      let formIsValid = isFormValid(this.state.formdata)
+      if(formIsValid){
+        this.props.loginUser(dataToSubmit);
+        if(this.props.loginSuccess){
+            this.props.history.push('/user/dashboard')
+        }
+      } else {
+          this.setState({formError: true})
+      }
     }
   render(){
+    console.log('props', this.props.loginSuccess)
       return(
           <div className="signin_wrapper">
               <form onSubmit={(event) => this.submitForm(event)}>
@@ -65,11 +78,29 @@ export default class Login extends Component {
                    />
                       <FormField 
                    id={'password'}
-                   formdata={this.state.formdata.passoword}
+                   formdata={this.state.formdata.password}
                    change={(element) => this.updateForm(element)}
                    />
+                   {this.state.formError ? 
+                   <div className="error_label">Please check your data</div> : null}
+                   <button onClick={(event) => this.submitForm(event)}>Log in</button>
               </form>
           </div>
       )
   }
 }
+
+const mapStateToProps = state => {
+   return {
+    loginSuccess: state.user.loginSuccess
+   }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+      // dispatching plain actions
+      loginUser: (data) => dispatch(loginUser(data)),
+    }
+  }
+
+  export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login))
