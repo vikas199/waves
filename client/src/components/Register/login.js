@@ -59,15 +59,18 @@ import { withRouter } from 'react-router-dom';
       let formIsValid = isFormValid(this.state.formdata)
       if(formIsValid){
         this.props.loginUser(dataToSubmit);
-        if(this.props.loginSuccess){
-            this.props.history.push('/user/dashboard')
-        }
       } else {
           this.setState({formError: true})
       }
     }
+
+    componentDidUpdate(previousProps, previousState){
+        if(previousProps.loginSucess.loginSucess !== this.props.loginSucess.loginSucess){
+            this.props.history.push('/user/dashboard')
+        }
+
+    }
   render(){
-    console.log('props', this.props.loginSuccess)
       return(
           <div className="signin_wrapper">
               <form onSubmit={(event) => this.submitForm(event)}>
@@ -92,7 +95,7 @@ import { withRouter } from 'react-router-dom';
 
 const mapStateToProps = state => {
    return {
-    loginSuccess: state.user.loginSuccess
+    loginSucess: state.user.loginSucess
    }
 }
 
