@@ -4,7 +4,7 @@ import FormField from '../../utils/Forms/FormField'
 import { connect } from 'react-redux';
 import { registerUser } from '../../actions/user_actions';
 import Dialog from '@material-ui/core/Dialog'
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 
 
@@ -110,27 +110,16 @@ class Register extends Component {
             formdata: newFormdata
         })
     } 
-    
-    componentWillReceiveProps(nextProps){
-     if(this.props.register !== nextProps.register){
-        const { register: { success }} = this.props;
-        if (success) {
+
+    componentDidUpdate(previousProps, previousState){
+        if (previousProps.register.success !== this.props.register.success) {
             this.setState({ formError: false, formSuccess: true})
             setTimeout(()=> {
-                return <Redirect to='/register_login' />;
-            }, 300)
+                this.props.history.push('/register_login')
+            }, 3000)
         }
-     }
     }
     render(){
-        // console.log('props', this.props)
-        // const { register: { success }} = this.props;
-        // if (success) {
-        //     this.setState({ formError: false, formSuccess: true})
-        //     setTimeout(()=> {
-        //         return <Redirect to='/register_login' />;
-        //     }, 300)
-        // }
         return(
             <div className="page_wrapper">
                 <div className="container">

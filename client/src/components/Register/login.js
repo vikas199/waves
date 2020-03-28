@@ -3,7 +3,7 @@ import { update, genereteData, isFormValid } from '../../utils/Forms/FormActions
 import { connect } from 'react-redux';
 import FormField from '../../utils/Forms/FormField'
 import { loginUser } from '../../actions/user_actions';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
  class Login extends Component {
   state = {
@@ -63,11 +63,14 @@ import { withRouter, Redirect } from 'react-router-dom';
           this.setState({formError: true})
       }
     }
+
+    componentDidUpdate(previousProps, previousState){
+        if(previousProps.loginSucess.loginSucess !== this.props.loginSucess.loginSucess){
+            this.props.history.push('/user/dashboard')
+        }
+
+    }
   render(){
-  const { loginSucess: { loginSucess }} = this.props;
-  if (loginSucess) {
-    return <Redirect to='/dashboard' />;
-  }
       return(
           <div className="signin_wrapper">
               <form onSubmit={(event) => this.submitForm(event)}>
