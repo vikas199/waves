@@ -136,6 +136,13 @@ brand.save((err,doc)=>{
 })
 })
 
+app.get('/api/product/brands',(req,res)=>{
+    Brand.find({},(err,brands)=>{
+        if(err) return res.status(400).send(err);
+        res.status(200).send(brands)
+    })
+})
+
 ////=========================================
 
 //                USERS
