@@ -4,3 +4,5 @@ export const REGISTER_USER = 'register_user';
 export const AUTH_USER = 'auth_user';
 export const GET_PRODUCTS_BY_SALE = 'get_products_by_sale';
 export const GET_PRODUCTS_BY_ARRIVAL = 'get_products_by_arrival';
+export const GET_PRODUCTS_BY_BRANDS = 'get_products_by_brand'
+export const GET_PRODUCTS_BY_WOODS = 'get_products_by_woods'
