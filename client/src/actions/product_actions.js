@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { PRODUCT_SERVER } from '../utils/misc';
-import { GET_PRODUCTS_BY_SALE, GET_PRODUCTS_BY_ARRIVAL,  GET_PRODUCTS_BY_BRANDS,  GET_PRODUCTS_BY_WOODS } from './types';
+import { GET_PRODUCTS_BY_SALE, GET_PRODUCTS_BY_ARRIVAL,  GET_PRODUCTS_BY_BRANDS,  GET_PRODUCTS_BY_WOODS, GET_PRODUCTS_TO_SHOP } from './types';
 
 
 
@@ -42,4 +42,23 @@ export function getProductsByWoods(){
         type: GET_PRODUCTS_BY_WOODS,
         payload: request
     }
+}
+
+export function getProductsToShop(skip,limitValue,filters=[], previousState=[]){
+     const limit = 6
+const data = {
+    skip,limit,filters
+}
+const request = axios.post(`${PRODUCT_SERVER}/shop`, data)
+.then(response => {
+    return {
+        size: response.data.size,
+        articles: response.data.articles
+    }
+})
+return {
+    type: GET_PRODUCTS_TO_SHOP,
+    payload: request
+}
+
 }
