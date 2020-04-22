@@ -26,7 +26,7 @@ export default function (state = initialState, action) {
     case GET_PRODUCTS_BY_WOODS:
       return { ...state, byWoods: action.payload }
     case GET_PRODUCTS_TO_SHOP:
-      return { ...state, toShop: action.payload.articles, toShopSize: action.payload.articles.size }
+      return { ...state, toShop: action.payload.articles, toShopSize: action.payload.size }
     default:
       return state
   }
