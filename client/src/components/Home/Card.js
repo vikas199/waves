@@ -20,8 +20,9 @@ export default class Card extends Component {
             <div className="name">{props.name}</div>
             <div className="name">${props.price}</div>
           </div>
-        </div>
-        {props.gid ? <div className="description">dsfsdfdsfsdfds</div> : null}
+        {props.grid ? <div className="description">
+    <p>{props.description}</p>
+        </div> : null}
         <div className="actions">
           <div>
             <MyButton
@@ -38,6 +39,7 @@ export default class Card extends Component {
              runAction={() => console.log('bag clicked')}
               />
           </div>
+        </div>
         </div>
       </div>
     )
