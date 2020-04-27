@@ -4,6 +4,8 @@ import {
   GET_PRODUCTS_BY_BRANDS,
   GET_PRODUCTS_BY_WOODS,
   GET_PRODUCTS_TO_SHOP,
+  ADD_PRODUCT,
+  CLEAR_PRODUCT
 } from "../actions/types"
 
 const initialState = {
@@ -13,7 +15,8 @@ const initialState = {
   byWoods: "",
   byFilter: "",
   toShop:"",
-  toShopSize:''
+  toShopSize:'',
+  addProduct: ''
 }
 export default function (state = initialState, action) {
   switch (action.type) {
@@ -27,6 +30,10 @@ export default function (state = initialState, action) {
       return { ...state, byWoods: action.payload }
     case GET_PRODUCTS_TO_SHOP:
       return { ...state, toShop: action.payload.articles, toShopSize: action.payload.size }
+      case ADD_PRODUCT: 
+      return { ...state, addProduct: action.payload}
+      case CLEAR_PRODUCT:
+        return {...state, addProduct:''}
     default:
       return state
   }
