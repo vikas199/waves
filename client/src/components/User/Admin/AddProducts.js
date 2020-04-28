@@ -3,6 +3,7 @@ import UserLayout from "../../../hoc/userlayout"
 import { update, genereteData, isFormValid, populateOptionFields, resetFields } from "../../../utils/Forms/FormActions"
 import FormField from "../../../utils/Forms/FormField"
 import { connect } from "react-redux"
+import FileUpload from "../../../utils/Forms/FileUpload"
 import { getProductsByBrands, getProductsByWoods, addProduct, clearProduct } from "../../../actions/product_actions"
 
 class AddProducts extends Component {
@@ -83,7 +84,10 @@ class AddProducts extends Component {
         config: {
           label: "Product Shipping",
           name: "shipping_input",
-          options: [{ key: true, value: "YES" }, { key: false, value: "NO" }],
+          options: [
+            { key: true, value: "YES" },
+            { key: false, value: "NO" },
+          ],
         },
         validation: {
           required: true,
@@ -99,7 +103,10 @@ class AddProducts extends Component {
         config: {
           label: "Available in stock",
           name: "available_input",
-          options: [{ key: true, value: "YES" }, { key: false, value: "No" }],
+          options: [
+            { key: true, value: "YES" },
+            { key: false, value: "No" },
+          ],
         },
         validation: {
           required: true,
@@ -165,63 +172,80 @@ class AddProducts extends Component {
         validationMessage: "",
         showlabel: true,
       },
+      images: {
+        value: [],
+        validation: {
+          required: false,
+        },
+        valid: true,
+        touched: false,
+        validationMessage: "",
+        showlabel: false,
+      },
     },
   }
 
-  componentDidMount(){
-    const { formdata } = this.state;
-    this.props.dispatch(getProductsByBrands()).then(response => {
-      const newFormData = populateOptionFields(formdata,this.props.products.byBrands,'brand');
-     this.updateFields(newFormData)
+  componentDidMount() {
+    const { formdata } = this.state
+    this.props.dispatch(getProductsByBrands()).then((response) => {
+      const newFormData = populateOptionFields(formdata, this.props.products.byBrands, "brand")
+      this.updateFields(newFormData)
     })
-    this.props.dispatch(getProductsByWoods()).then(response => {
-      const newFormData = populateOptionFields(formdata,this.props.products.byWoods,'wood');
-     this.updateFields(newFormData)
+    this.props.dispatch(getProductsByWoods()).then((response) => {
+      const newFormData = populateOptionFields(formdata, this.props.products.byWoods, "wood")
+      this.updateFields(newFormData)
     })
   }
 
   updateFields = (newFormData) => {
-    this.setState({formdata: newFormData})
+    this.setState({ formdata: newFormData })
   }
 
   submitForm = (event) => {
-    event.preventDefault();
-    let dataToSubmit = genereteData(this.state.formdata,'products')
+    event.preventDefault()
+    let dataToSubmit = genereteData(this.state.formdata, "products")
     let formIsValid = isFormValid(this.state.formdata)
-    if(formIsValid){
-        this.props.addProduct(dataToSubmit)
+    if (formIsValid) {
+      this.props.addProduct(dataToSubmit)
     } else {
-        this.setState({formError: true})
+      this.setState({ formError: true })
     }
   }
 
-  resetFieldHandler= () => {
-    const newFormData = resetFields(this.state.formdata, 'products')
-    this.setState({formdata: newFormData, formSuccess: true})
+  resetFieldHandler = () => {
+    const newFormData = resetFields(this.state.formdata, "products")
+    this.setState({ formdata: newFormData, formSuccess: true })
     setTimeout(() => {
-      this.setState({formSuccess: false}, 
-        () => {
-          this.props.clearProduct()
-        })          
-     },300)
+      this.setState({ formSuccess: false }, () => {
+        this.props.clearProduct()
+      })
+    }, 300)
   }
 
-  componentDidUpdate(previousProps, previousState){
-    if(previousProps.products.addProduct !== this.props.products.addProduct){
+  componentDidUpdate(previousProps, previousState) {
+    if (previousProps.products.addProduct !== this.props.products.addProduct) {
       this.resetFieldHandler()
-    } 
-    else if(this.props.products.addProduct.success === false){
-      this.setState({ formError: true})
+    } else if (this.props.products.addProduct.success === false) {
+      this.setState({ formError: true })
     }
   }
 
-updateForm = (element) => {
-    const newFormdata = update(element,this.state.formdata,'products');
+  updateForm = (element) => {
+    const newFormdata = update(element, this.state.formdata, "products")
     this.setState({
-        formError: false,
-        formdata: newFormdata
+      formError: false,
+      formdata: newFormdata,
     })
-} 
+  }
+
+  imagesHandler = (images) => {
+    const newFormData = {
+      ...this.state.formdata,
+    }
+    newFormData["images"].value = images
+    newFormData["images"].valid = true
+    this.setState({ formdata: newFormData })
+  }
 
   render() {
     return (
@@ -229,6 +253,7 @@ updateForm = (element) => {
         <div>
           <h1>Add Product</h1>
           <form onSubmit={(event) => this.submitForm(event)}>
+            <FileUpload imagesHandler={(images) => this.imagesHandler(images)} reset={this.state.formSuccess} />
             <FormField id={"name"} formdata={this.state.formdata.name} change={(element) => this.updateForm(element)} />
             <FormField
               id={"description"}
@@ -285,12 +310,11 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return{
+const mapDispatchToProps = (dispatch) => {
+  return {
     addProduct: (data) => dispatch(addProduct(data)),
-    clearProduct: () => dispatch(clearProduct())
+    clearProduct: () => dispatch(clearProduct()),
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddProducts)
