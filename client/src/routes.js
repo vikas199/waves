@@ -9,6 +9,7 @@ import UserDashBoard from "./components/User";
 import Auth from './hoc/auth'
 import Shop from './components/Shop'
 import AddProducts from './components/User/Admin/AddProducts'
+import ManageCategories from './components/User/Admin/ManageCategories'
 
 
 const Routes = () => {
@@ -17,6 +18,7 @@ const Routes = () => {
       <Switch>
         <Route path="/user/dashboard" exact component={Auth(UserDashBoard, true)}/>
         <Route path="/admin/add_product" exact component={Auth(AddProducts, true)}/>
+        <Route path="/admin/manage_categories" exact component={Auth(ManageCategories, true)}/>
       <Route path="/register" exact component={Auth(Register, false)}/>
       <Route path="/register_login" exact component={Auth(RegisterLogin,false)}/>
         <Route path="/shop" exact component={Auth(Shop,null)}/>
