@@ -49,7 +49,7 @@ export default function ProdInfo(props) {
     <div className="product_actions">
       <div className="price">${detail.price}</div>
       <div className="cart">
-        <MyButton type="add_to_cart_link" runAction={() => console.log("clicked")} />
+        <MyButton type="add_to_cart_link" runAction={() => props.addToCart(detail._id)} />
       </div>
     </div>
   )
