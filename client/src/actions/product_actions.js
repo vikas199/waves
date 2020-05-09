@@ -8,9 +8,27 @@ import {
   GET_PRODUCTS_TO_SHOP,
   ADD_PRODUCT,
   CLEAR_PRODUCT,
+  CLEAR_PRODUCT_DETAIL,
+  GET_PRODUCT_DETAIL,
   ADD_BRAND,
-  ADD_WOOD
+  ADD_WOOD,
 } from "./types"
+
+export function getProductDetail(id) {
+  const request = axios.get(`${PRODUCT_SERVER}/articles_by_id?id=${id}&type=single`).then((response) => {
+    return response.data[0]
+  })
+  return {
+    type: GET_PRODUCT_DETAIL,
+    payload: request,
+  }
+}
+
+export function clearProductDetail() {
+  return {
+    type: CLEAR_PRODUCT_DETAIL,
+  }
+}
 
 export function getProductsByArrival() {
   const request = axios
@@ -76,38 +94,36 @@ export function addProduct(dataToSubmit) {
   }
 }
 
-export function clearProduct(){
-return {
-  type: CLEAR_PRODUCT
-}
-}
-
-export function addBrand(dataToSubmit, exstingBrands){
- const request = axios.post(`${PRODUCT_SERVER}/brand`, dataToSubmit)
- .then(response => {
-  let brands = [...exstingBrands, response.data.brand]
+export function clearProduct() {
   return {
-    success: response.data.success,
-    brands
+    type: CLEAR_PRODUCT,
   }
- })
- return {
-   type: ADD_BRAND,
-   payload: request
- }
 }
 
-export function addWood(dataToSubmit, exstingWoods){
-  const request = axios.post(`${PRODUCT_SERVER}/wood`, dataToSubmit)
-  .then(response => {
-   let woods = [...exstingWoods, response.data.wood]
-   return {
-     success: response.data.success,
-     woods
-   }
+export function addBrand(dataToSubmit, exstingBrands) {
+  const request = axios.post(`${PRODUCT_SERVER}/brand`, dataToSubmit).then((response) => {
+    let brands = [...exstingBrands, response.data.brand]
+    return {
+      success: response.data.success,
+      brands,
+    }
+  })
+  return {
+    type: ADD_BRAND,
+    payload: request,
+  }
+}
+
+export function addWood(dataToSubmit, exstingWoods) {
+  const request = axios.post(`${PRODUCT_SERVER}/wood`, dataToSubmit).then((response) => {
+    let woods = [...exstingWoods, response.data.wood]
+    return {
+      success: response.data.success,
+      woods,
+    }
   })
   return {
     type: ADD_WOOD,
-    payload: request
+    payload: request,
   }
- }
+}
