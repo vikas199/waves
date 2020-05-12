@@ -6,6 +6,7 @@ import faFrown from "@fortawesome/fontawesome-free-solid/faFrown"
 import faSmile from "@fortawesome/fontawesome-free-solid/faSmile"
 import { getCartItems, removeCartItem } from "../../actions/user_actions"
 import ProductBlock from "../../utils/User/product_block"
+import Paypal from "../../utils/Paypal"
 
 class Cart extends Component {
   state = {
@@ -31,8 +32,7 @@ class Cart extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.user.cartDetail !== this.props.user.cartDetail && this.props.user.cartDetail.length <= 0) {
       this.setState({ showTotal: false })
-    }
-    else if (prevProps.user.cartDetail !== this.props.user.cartDetail && this.props.user.cartDetail.length > 0) {
+    } else if (prevProps.user.cartDetail !== this.props.user.cartDetail && this.props.user.cartDetail.length > 0) {
       this.calculateTotal(this.props.user.cartDetail)
     }
   }
@@ -53,6 +53,20 @@ class Cart extends Component {
 
   removeItem = (id) => {
     this.props.removeCartItem(id)
+  }
+  transactionError = () => {
+    console.log('paypal error')
+  }
+
+  transactionError = () => {
+    console.log('Tranaction cancelled')
+  }
+
+  transactionSuccess = (data) => {
+    this.setState({
+      showTotal: false,
+      showSuccess: true
+    })
   }
 
   render() {
@@ -81,7 +95,16 @@ class Cart extends Component {
                 this.showNoItemMsg()
               )}
             </div>
-            {this.state.showTotal ? <div className="paypal_button_container">Paypal</div> : null}
+            {this.state.showTotal ? (
+              <div className="paypal_button_container">
+                <Paypal
+                  toPay={this.state.total}
+                  transactionError={(data) => this.transactionError(data)}
+                  transactionCancelled={(data) => this.transactionError(data)}
+                  onSuccess={(data) => this.transactionSuccess(data)}
+                />
+              </div>
+            ) : null}
           </div>
         </UserLayout>
       </div>
