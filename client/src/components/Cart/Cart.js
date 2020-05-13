@@ -4,7 +4,7 @@ import { connect } from "react-redux"
 import FontAwesomeIcon from "@fortawesome/react-fontawesome"
 import faFrown from "@fortawesome/fontawesome-free-solid/faFrown"
 import faSmile from "@fortawesome/fontawesome-free-solid/faSmile"
-import { getCartItems, removeCartItem } from "../../actions/user_actions"
+import { getCartItems, removeCartItem, onSuccessBuy } from "../../actions/user_actions"
 import ProductBlock from "../../utils/User/product_block"
 import Paypal from "../../utils/Paypal"
 
@@ -34,7 +34,16 @@ class Cart extends Component {
       this.setState({ showTotal: false })
     } else if (prevProps.user.cartDetail !== this.props.user.cartDetail && this.props.user.cartDetail.length > 0) {
       this.calculateTotal(this.props.user.cartDetail)
-    }
+    } 
+  }
+
+  componentWillReceiveProps(nextProps){
+  if(this.props.user.successBuy !== nextProps.user.successBuy){
+    this.setState({
+          showTotal: false,
+          showSuccess: true,
+        })
+  }
   }
 
   calculateTotal = (cartDetail) => {
@@ -55,17 +64,18 @@ class Cart extends Component {
     this.props.removeCartItem(id)
   }
   transactionError = () => {
-    console.log('paypal error')
+    console.log("paypal error")
   }
 
   transactionError = () => {
-    console.log('Tranaction cancelled')
+    console.log("Tranaction cancelled")
   }
 
   transactionSuccess = (data) => {
-    this.setState({
-      showTotal: false,
-      showSuccess: true
+    const { user, onSuccessBuy } = this.props
+    onSuccessBuy({
+      cartDetail: user.cartDetail,
+      paymentData: data,
     })
   }
 
@@ -122,6 +132,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getCartItems: (data, value) => dispatch(getCartItems(data, value)),
     removeCartItem: (data) => dispatch(removeCartItem(data)),
+    onSuccessBuy: (data) => dispatch(onSuccessBuy(data)),
   }
 }
 

@@ -327,7 +327,7 @@ app.get(`/api/users/removeFromCart`, auth, (req, res) => {
   )
 })
 
-app.post("/api/users/successBuy", auth, (req, res) => {
+app.post("/api/users/successBuy",auth,(req, res) => {
   let history = []
   let transactionData = {}
   //user history
@@ -366,7 +366,7 @@ app.post("/api/users/successBuy", auth, (req, res) => {
         doc.product.forEach((item) => {
           products.push({ id: item.id, quantity: item.quantity })
         })
-        async.eachOfSeries(
+        async.eachSeries(
           products,
           (item, callback) => {
             Product.update(

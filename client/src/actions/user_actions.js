@@ -1,8 +1,16 @@
 import axios from "axios"
 
 import { USER_SERVER, PRODUCT_SERVER } from "../utils/misc"
-import { REGISTER_USER, LOGIN_USER, AUTH_USER, LOGOUT_USER, ADD_TO_CART, GET_CART_ITEMS, REMOVE_CART_ITEMS} from "./types"
-
+import {
+  REGISTER_USER,
+  LOGIN_USER,
+  AUTH_USER,
+  LOGOUT_USER,
+  ADD_TO_CART,
+  GET_CART_ITEMS,
+  REMOVE_CART_ITEMS,
+  ON_SUCCESS_BUY,
+} from "./types"
 
 export function registerUser(dataToSubmit) {
   const request = axios.post(`${USER_SERVER}/register`, dataToSubmit).then((response) => response.data)
@@ -62,20 +70,29 @@ export function getCartItems(cartItems, userCart) {
   }
 }
 
-export function removeCartItem(id){
-const request = axios.get(`${USER_SERVER}/removeFromCart?_id=${id}`)
-.then(response => {
-  response.data.cart.forEach(item=>{
-    response.data.cartDetail.forEach((k,i)=>{
-      if(item.id === k._id){
-        response.data.cartDetail[i].quantity = item.quantity;
-      }
+export function removeCartItem(id) {
+  const request = axios.get(`${USER_SERVER}/removeFromCart?_id=${id}`).then((response) => {
+    response.data.cart.forEach((item) => {
+      response.data.cartDetail.forEach((k, i) => {
+        if (item.id === k._id) {
+          response.data.cartDetail[i].quantity = item.quantity
+        }
+      })
     })
+    return response.data
   })
-  return response.data
-})
-return {
-  type: REMOVE_CART_ITEMS,
-  payload: request
+  return {
+    type: REMOVE_CART_ITEMS,
+    payload: request,
+  }
 }
+
+
+export function onSuccessBuy(data){
+  const request = axios.post(`${USER_SERVER}/successBuy`, data)
+  .then((response) => response.data)
+  return {
+    type: ON_SUCCESS_BUY,
+    payload: request
+  }
 }
