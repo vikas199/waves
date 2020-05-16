@@ -7,6 +7,8 @@ import {
   GET_CART_ITEMS,
   REMOVE_CART_ITEMS,
   ON_SUCCESS_BUY,
+  CLEAR_USER_DATA,
+  UPDATE_USER_DATA
 } from "../actions/types"
 
 const initialState = {
@@ -51,7 +53,11 @@ export default function (state = initialState, action) {
           cart: action.payload.cart,
         },
         cartDetail: action.payload.cartDetail,
-      }
+      } 
+      case UPDATE_USER_DATA:
+        return  { ...state, updatedUserValue: action.payload }
+        case CLEAR_USER_DATA:
+          return {...state, updateUserValue: action.payload}
     default:
       return state
   }

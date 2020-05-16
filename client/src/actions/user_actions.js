@@ -10,6 +10,8 @@ import {
   GET_CART_ITEMS,
   REMOVE_CART_ITEMS,
   ON_SUCCESS_BUY,
+  UPDATE_USER_DATA,
+  CLEAR_USER_DATA,
 } from "./types"
 
 export function registerUser(dataToSubmit) {
@@ -87,12 +89,27 @@ export function removeCartItem(id) {
   }
 }
 
-
-export function onSuccessBuy(data){
-  const request = axios.post(`${USER_SERVER}/successBuy`, data)
-  .then((response) => response.data)
+export function onSuccessBuy(data) {
+  const request = axios.post(`${USER_SERVER}/successBuy`, data).then((response) => response.data)
   return {
     type: ON_SUCCESS_BUY,
-    payload: request
+    payload: request,
+  }
+}
+
+export function updateUserData(dataToSubmit) {
+  const request = axios.post(`${USER_SERVER}/updateProfile`, dataToSubmit).then((response) => {
+    return response.data
+  })
+
+  return {
+    type: UPDATE_USER_DATA,
+    payload: request,
+  }
+}
+export function clearUserData() {
+  return {
+    type: CLEAR_USER_DATA,
+    payload: "",
   }
 }
