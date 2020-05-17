@@ -73,16 +73,6 @@ class UpdatePersonalInfo extends Component {
     }
   }
 
-  // componentDidUpdate(){
-  //       if(this.props.user.updatedUserValue){
-  //     this.setState({formSuccess: true})
-  //     setTimeout(()=>{
-  //       this.props.clearUserData()
-  //       this.setState({formSuccess: false})
-  //     },500)
-  //   }
-  // }
-
   submitForm = (event) => {
     event.preventDefault()
     let dataToSubmit = genereteData(this.state.formdata, "update_user")
@@ -102,7 +92,6 @@ class UpdatePersonalInfo extends Component {
     })
   }
   render() {
-    console.log('props', this.props)
     return (
       <div>
         <form onSubmit={(event) => this.submitForm()}>

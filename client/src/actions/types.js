@@ -19,3 +19,7 @@ export const REMOVE_CART_ITEMS='remove_cart_items'
 export const ON_SUCCESS_BUY='on_success_buy'
 export const UPDATE_USER_DATA='update_user_data'
 export const CLEAR_USER_DATA='clear_user_data'
+export const GET_SITE_DATA='get_site_data'
+export const UPDATE_SITE_DATA = 'update_site_data'
+
+

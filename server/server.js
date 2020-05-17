@@ -36,6 +36,7 @@ const { Brand } = require("./models/brand")
 const { Wood } = require("./models/wood")
 const { Product } = require("./models/product")
 const { Payment } = require("./models/payments")
+const { Site } = require("./models/site")
 
 //Middlewares
 
@@ -327,7 +328,7 @@ app.get(`/api/users/removeFromCart`, auth, (req, res) => {
   )
 })
 
-app.post("/api/users/successBuy",auth,(req, res) => {
+app.post("/api/users/successBuy", auth, (req, res) => {
   let history = []
   let transactionData = {}
   //user history
@@ -394,20 +395,41 @@ app.post("/api/users/successBuy",auth,(req, res) => {
   )
 })
 
-app.post('/api/users/updateProfile',auth,(req,res)=>{
+app.post("/api/users/updateProfile", auth, (req, res) => {
   User.findOneAndUpdate(
     { _id: req.user._id },
     {
-      "$set": req.body
+      $set: req.body,
     },
     { new: true },
-    (err,doc)=>{
-      if(err) return res.json({success: false,err})
+    (err, doc) => {
+      if (err) return res.json({ success: false, err })
       return res.status(200).send({
-        success: true
+        success: true,
       })
     }
   )
+})
+
+//// SITE INFO
+
+//////////////////////////////
+
+app.get("/api/site/site_data", (req, res) => {
+  Site.find({}, (err, site) => {
+    if (err) return res.status(400).send(err)
+    res.status(200).send(site[0].siteInfo)
+  })
+})
+
+app.post("/api/site/site_data", auth, admin, (req, res) => {
+  Site.findOneAndUpdate({ name: "Site Info" }, { $set: { siteInfo: req.body } }, { new: true }, (err, doc) => {
+    if (err) return res.json({ success: false, err })
+    return res.status(200).send({
+      success: true,
+      siteInfo: doc.siteInfo,
+    })
+  })
 })
 
 const port = process.env.PORT || 3002
