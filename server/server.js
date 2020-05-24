@@ -10,6 +10,7 @@ const app = express()
 const mongoose = require("mongoose")
 const async = require("async")
 require("dotenv").config()
+const SHA1 = require('crypto-js/sha1')
 
 mongoose.Promise = global.Promise
 mongoose
@@ -42,6 +43,10 @@ const { Site } = require("./models/site")
 
 const { auth } = require("./middleware/auth")
 const { admin } = require("./middleware/admin")
+
+//UTILS
+
+const { sendEmail } = require("./utils/mail/index")
 
 ////=========================================
 
@@ -214,7 +219,8 @@ app.post("/api/users/register", (req, res) => {
   const user = new User(req.body)
   user.save((err, doc) => {
     if (err) return res.json({ success: false, err })
-    res.status(200).json({
+    sendEmail(doc.email, doc.name, null, "welcome")
+    return res.status(200).json({
       success: true,
     })
   })
