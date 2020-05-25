@@ -6,7 +6,6 @@ import faClock from "@fortawesome/fontawesome-free-solid/faClock"
 import faEnvelope from "@fortawesome/fontawesome-free-solid/faEnvelope"
 
 const Footer = ({ data }) => {
-  console.log(data.siteInfo)
   return data.siteInfo ? (
     <footer className="bck_b_dark">
       <div className="container">

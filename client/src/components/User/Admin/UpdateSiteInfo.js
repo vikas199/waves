@@ -116,7 +116,6 @@ class UpdateSiteInfo extends Component {
     }
   }
   render() {
-      console.log('props', this.props)
     return (
       <div>
         <form onSubmit={(event) => this.submitForm(event)}>
