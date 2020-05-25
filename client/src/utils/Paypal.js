@@ -46,20 +46,3 @@ export default class Paypal extends Component {
     )
   }
 }
-
-
-// {"paid":true,
-// "cancelled":false,
-// "payerID":"CAFTNXS3LS992",
-// "paymentID":"PAYID-L24KTIY6DY78717TC096562G",
-// "paymentToken":"EC-3TR63656Y53894631",
-// "returnUrl":"https://www.paypal.com/checkoutnow/error?paymentId=PAYID-L24KTIY6DY78717TC096562G&token=EC-3TR63656Y53894631&PayerID=CAFTNXS3LS992",
-// "address":{
-//     "recipient_name":"John Doe",
-//     "line1":"1 Main St",
-//     "city":"San Jose",
-//     "state":"CA",
-//     "postal_code":"95131",
-//     "country_code":"US"
-// },
-// "email":"sb-7gydg1732055@personal.example.com"}

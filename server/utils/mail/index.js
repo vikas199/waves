@@ -1,6 +1,7 @@
 const mailer = require("nodemailer")
 const { welcome } = require("./welcome_template")
 const { purchase } = require("./purchase_template")
+const { resetPassword } = require("./reset_password")
 require("dotenv").config()
 
 const getEmailData = (to, name, token, template, actionData) => {
@@ -21,7 +22,15 @@ const getEmailData = (to, name, token, template, actionData) => {
         subject: `Thanks for shopping with us ${name}`,
         html: purchase(actionData),
       }
-      break
+      break;
+      case "reset_password":
+        data = {
+          from: "waves <mvikasraj1471@gmail.com>",
+          to,
+          subject: `Hey  ${name}, reset your password`,
+          html: resetPassword(actionData),
+        }
+        break
     default:
       data
   }

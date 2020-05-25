@@ -40,6 +40,7 @@ const { Product } = require("./models/product")
 const { Payment } = require("./models/payments")
 const { Site } = require("./models/site")
 
+
 //Middlewares
 
 const { auth } = require("./middleware/auth")
@@ -490,6 +491,19 @@ app.post("/api/site/site_data", auth, admin, (req, res) => {
   })
 })
 
+
+app.post('/api/users/reset_user',(req,res)=>{
+  User.findOne(
+    {'email': req.body.email},
+    (err,user)=>{
+      user.generateResetToken((err,user)=>{
+        if(err) return res.json({success: false, err})
+        sendEmail(user.email,user.name,null,"reset_password",user)
+        return res.json({success: true})
+      })
+    }
+  )
+})
 const port = process.env.PORT || 3002
 
 app.listen(port, () => {

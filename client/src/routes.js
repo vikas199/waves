@@ -16,6 +16,7 @@ import UpdateProfile from "./components/User/UpdateProfile"
 import UpdateSiteInfo from "./components/User/Admin/ManageSite"
 import PageNotFound from "./utils/pageNotFound"
 import AddFile from "./components/User/Admin/AddFile"
+import ResetPassword from './components/Reset_Password/index'
 
 const Routes = () => {
   return (
@@ -28,6 +29,7 @@ const Routes = () => {
         <Route path="/admin/site_info" exact component={Auth(UpdateSiteInfo, true)} />
         <Route path="/admin/manage_categories" exact component={Auth(ManageCategories, true)} />
         <Route path="/admin/add_file" exact component={Auth(AddFile, true)} />
+        <Route path="/reset_user" exact component={Auth(ResetPassword, false)} />
         <Route path="/register" exact component={Auth(Register, false)} />
         <Route path="/register_login" exact component={Auth(RegisterLogin, false)} />
         <Route path="/product_detail/:id" exact component={Auth(ProductDeatil, null)} />
