@@ -5,12 +5,13 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const formidable = require("express-formidable")
 const cloudinary = require("cloudinary")
+const multer = require("multer")
 
 const app = express()
 const mongoose = require("mongoose")
 const async = require("async")
 require("dotenv").config()
-const SHA1 = require('crypto-js/sha1')
+const SHA1 = require("crypto-js/sha1")
 
 mongoose.Promise = global.Promise
 mongoose
@@ -48,6 +49,9 @@ const { admin } = require("./middleware/admin")
 
 const { sendEmail } = require("./utils/mail/index")
 
+// const date = new Date()
+// const po= `PO-${date.getSeconds()}${date.getMilliseconds()}-${SHA1("14SADFSD141SDF").toString().substring(0,8)}`
+// console.log('po', po)
 ////=========================================
 
 //             PRODUCTS
@@ -59,6 +63,47 @@ const { sendEmail } = require("./utils/mail/index")
 
 // by sell
 // articles?sortBy=sold&order=desc&limit=4
+
+const storage = multer.diskStorage({
+  destination: (req, res, cb) => {
+    cb(null, "uploads/")
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_${file.originalname}`)
+  },
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname)
+    if (ext !== ".jpg" && ext !== ".png") {
+      return cb(res.status(400).send("only jpg is allowed"), false)
+    }
+    cb(null, true)
+  },
+})
+const upload = multer({ storage: storage }).single("file")
+
+app.post("/api/users/uploadfile", auth, admin, (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      return res.json({ success: false, err })
+    }
+    return res.json({ success: true })
+  })
+})
+
+const fs = require('fs')
+const path = require('path')
+
+app.get('/api/users/admin_files',auth,admin,(req,res)=>{
+  const dir = path.resolve('.')+'/uploads/';
+  fs.readdir(dir,(err,items)=>{
+   return res.status(200).send(items)
+  })
+})
+
+app.get('/api/users/download/:id',auth,admin,(req,res)=>{
+  const file = path.resolve('.')+`/uploads/${req.params.id}`;
+  res.download(file)
+})
 
 app.get("/api/product/articles", (req, res) => {
   let order = req.query.order ? req.query.order : "asc"
@@ -337,9 +382,12 @@ app.get(`/api/users/removeFromCart`, auth, (req, res) => {
 app.post("/api/users/successBuy", auth, (req, res) => {
   let history = []
   let transactionData = {}
+  const date = new Date()
+  const po = `PO-${date.getSeconds()}${date.getMilliseconds()}-${SHA1(req.user._id).toString().substring(0, 8)}`
   //user history
   req.body.cartDetail.forEach((item) => {
     history.push({
+      porder: po,
       dateOfPurchase: Date.now(),
       name: item.name,
       brand: item.brand,
@@ -357,7 +405,10 @@ app.post("/api/users/successBuy", auth, (req, res) => {
     lastname: req.user.lastname,
     email: req.user.email,
   }
-  transactionData.data = req.body.paymentData
+  transactionData.data = {
+    ...req.body.paymentData,
+    porder: po,
+  }
   transactionData.product = history
 
   User.findOneAndUpdate(
@@ -389,6 +440,7 @@ app.post("/api/users/successBuy", auth, (req, res) => {
           },
           (err) => {
             if (err) return res.json({ success: false, err })
+            sendEmail(user.email, user.name, null, "purchase", transactionData)
             res.status(200).json({
               success: true,
               cart: user.cart,
