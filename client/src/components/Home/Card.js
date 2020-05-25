@@ -18,7 +18,7 @@ class Card extends Component {
         <div className="image" style={{ background: `url(${this.renderCardImage(props.images)}) no-repeat` }}></div>
         <div className="action_container">
           <div className="tags">
-            <div className="brand">{props.brand.name}</div>
+            <div className="brand">{props.brand && props.brand.name ? props.brand.name : 'No Name available'}</div>
             <div className="name">{props.name}</div>
             <div className="name">${props.price}</div>
           </div>
