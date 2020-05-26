@@ -10,6 +10,7 @@ const multer = require("multer")
 const app = express()
 const mongoose = require("mongoose")
 const async = require("async")
+const moment = require("moment")
 require("dotenv").config()
 const SHA1 = require("crypto-js/sha1")
 
@@ -39,7 +40,6 @@ const { Wood } = require("./models/wood")
 const { Product } = require("./models/product")
 const { Payment } = require("./models/payments")
 const { Site } = require("./models/site")
-
 
 //Middlewares
 
@@ -91,18 +91,18 @@ app.post("/api/users/uploadfile", auth, admin, (req, res) => {
   })
 })
 
-const fs = require('fs')
-const path = require('path')
+const fs = require("fs")
+const path = require("path")
 
-app.get('/api/users/admin_files',auth,admin,(req,res)=>{
-  const dir = path.resolve('.')+'/uploads/';
-  fs.readdir(dir,(err,items)=>{
-   return res.status(200).send(items)
+app.get("/api/users/admin_files", auth, admin, (req, res) => {
+  const dir = path.resolve(".") + "/uploads/"
+  fs.readdir(dir, (err, items) => {
+    return res.status(200).send(items)
   })
 })
 
-app.get('/api/users/download/:id',auth,admin,(req,res)=>{
-  const file = path.resolve('.')+`/uploads/${req.params.id}`;
+app.get("/api/users/download/:id", auth, admin, (req, res) => {
+  const file = path.resolve(".") + `/uploads/${req.params.id}`
   res.download(file)
 })
 
@@ -491,15 +491,35 @@ app.post("/api/site/site_data", auth, admin, (req, res) => {
   })
 })
 
+app.post("/api/users/reset_user", (req, res) => {
+  User.findOne({ email: req.body.email }, (err, user) => {
+    user.generateResetToken((err, user) => {
+      if (err) return res.json({ success: false, err })
+      sendEmail(user.email, user.name, null, "reset_password", user)
+      return res.json({ success: true })
+    })
+  })
+})
 
-app.post('/api/users/reset_user',(req,res)=>{
+app.post("/api/users/reset_password", (req, res) => {
+  var today = moment().startOf("day").valueOf()
   User.findOne(
-    {'email': req.body.email},
-    (err,user)=>{
-      user.generateResetToken((err,user)=>{
-        if(err) return res.json({success: false, err})
-        sendEmail(user.email,user.name,null,"reset_password",user)
-        return res.json({success: true})
+    {
+      resetToken: req.body.resetToken,
+      resetTokenExp: {
+        $gte: today,
+      },
+    },
+    (err, user) => {
+      if (!user) return res.json({ success: false, message: "Sorry , bad token generete a new password" })
+      user.password = req.body.password;
+      user.resetToken = "";
+      user.resetTokenExp = "";
+      user.save((err, doc) => {
+        if (err) return res.json({ success: false, err })
+        return res.status(200).json({
+          success: true,
+        })
       })
     }
   )

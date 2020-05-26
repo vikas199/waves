@@ -87,6 +87,7 @@ import { withRouter } from 'react-router-dom';
                    {this.state.formError ? 
                    <div className="error_label">Please check your data</div> : null}
                    <button onClick={(event) => this.submitForm(event)}>Log in</button>
+                   <button style={{marginLeft: '10px'}} onClick={() => this.props.history.push('/reset_user')}>Forgot Password, Need Help?</button>
               </form>
           </div>
       )
